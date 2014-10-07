@@ -1,11 +1,12 @@
 var fs = require('fs');
 
-module.exports = function requireAll(options) {
+module.exports = function requireAll(options, params) {
   if (typeof options === 'string') {
     options = {
       dirname: options,
       filter: /(.+)\.js(on)?$/,
-      excludeDirs: /^\.(git|svn)$/
+      excludeDirs: /^\.(git|svn)$/,
+      params: params
     };
   }
 
@@ -31,8 +32,12 @@ module.exports = function requireAll(options) {
     } else {
       var match = file.match(options.filter);
       if (!match) return;
-
-      modules[match[1]] = require(filepath);
+	  
+	  if(!options.params) {
+	      modules[match[1]] = require(filepath);
+	  } else {
+		  modules[match[1]] = require(filepath)(params);
+	  }
     }
   });
 
