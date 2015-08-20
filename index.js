@@ -28,7 +28,7 @@ module.exports = function requireAll(options) {
       if (excludeDirectory(file)) return;
 
       if (mapSubDirectoryNames){
-        file = map(file, filepath);
+        file = map(file, filepath, false);
       }
 
       modules[file] = requireAll({
@@ -44,9 +44,9 @@ module.exports = function requireAll(options) {
       if (!match) return;
 	  
 	  if(!options.params) {
-	      modules[match[1]] = resolve(require(filepath));
+	      modules[map(match[1], filepath, true)] = resolve(require(filepath));
 	  } else {
-		  modules[match[1]] = resolve(require(filepath))(params);
+	      modules[map(match[1], filepath, true)] = resolve(require(filepath))(params);
 	  }
     }
   });
