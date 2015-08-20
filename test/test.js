@@ -18,6 +18,108 @@ assert.deepEqual(controllers, {
   'other-Controller': {
     index: 1,
     show: 'nothing'
+  },
+
+  'sub-dir': {
+    'other-Controller': {
+      index: 1,
+      show: 2
+    }
+  }
+});
+
+var controllersMap = requireAll({
+  dirname: __dirname + '/controllers',
+  filter: /(.+Controller)\.js$/,
+  map: function (name) {
+    return name.replace(/-([A-Z])/, function (m, c) {
+      return '_' + c.toLowerCase();
+    });
+  }
+});
+
+assert.deepEqual(controllersMap, {
+  main_controller: {
+    index: 1,
+    show: 2,
+    add: 3,
+    edit: 4
+  },
+
+  other_controller: {
+    index: 1,
+    show: 'nothing'
+  },
+
+  'sub-dir': {
+    other_controller: {
+      index: 1,
+      show: 2
+    }
+  }
+});
+
+
+controllersMap = requireAll({
+  dirname: __dirname + '/controllers',
+  filter: /(.+Controller)\.js$/,
+  map: function (name) {
+    return name.replace(/-([A-Za-z])/, function (m, c) {
+      return '_' + c.toLowerCase();
+    });
+  }
+});
+
+assert.deepEqual(controllersMap, {
+  main_controller: {
+    index: 1,
+    show: 2,
+    add: 3,
+    edit: 4
+  },
+
+  other_controller: {
+    index: 1,
+    show: 'nothing'
+  },
+
+  sub_dir: {
+    other_controller: {
+      index: 1,
+      show: 2
+    }
+  }
+});
+
+controllersMap = requireAll({
+  dirname: __dirname + '/controllers',
+  filter: /(.+Controller)\.js$/,
+  map: function (name) {
+    return name.replace(/-([A-Za-z])/, function (m, c) {
+      return '_' + c.toLowerCase();
+    });
+  },
+  mapSubDirectoryNames: false
+});
+
+assert.deepEqual(controllersMap, {
+  main_controller: {
+    index: 1,
+    show: 2,
+    add: 3,
+    edit: 4
+  },
+
+  other_controller: {
+    index: 1,
+    show: 'nothing'
+  },
+
+  'sub-dir': {
+    other_controller: {
+      index: 1,
+      show: 2
+    }
   }
 });
 
@@ -80,3 +182,14 @@ var excludedSvnAndSub = requireAll({
 assert.equal(excludedSvnAndSub['.svn'], undefined);
 assert.ok(excludedSvnAndSub.root);
 assert.equal(excludedSvnAndSub.sub, undefined);
+
+var resolvedValues = requireAll({
+  dirname: __dirname + '/resolved',
+  filter: /(.+)\.js$/,
+  resolve: function (fn) {
+    return fn('arg1', 'arg2');
+  }
+});
+
+assert.equal(resolvedValues.onearg, 'arg1');
+assert.equal(resolvedValues.twoargs, 'arg2');
